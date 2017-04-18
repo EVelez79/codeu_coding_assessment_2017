@@ -15,12 +15,50 @@
 package com.google.codeu.codingchallenge;
 
 import java.io.IOException;
+import java.util.*;
 
 final class MyJSONParser implements JSONParser {
 
   @Override
   public JSON parse(String in) throws IOException {
-    // TODO: implement this
-    return new MyJSON();
+	  String newIn = null;
+	  String key;
+	  String value;
+	  HashMap<String, Object> map = new HashMap<String, Object>();
+
+	  in = in.trim();
+
+	// checks for valid input
+	  if(in.length() < 1) {
+		  throw new IOException("Not valid");
+		// checks for quotations in JSON-lite, if none, it is considered an empty object.
+	  } else if (in.indexOf('"') == -1) {
+		  return new MyJSON(map);
+	  }
+
+	// checks for {} and makes new String from substring between {}
+	  if(in.charAt(0) == '{' && in.charAt(in.length()-1) == '}') {
+		  newIn = in.substring(1, in.length()-1).trim();
+	  }
+
+	// makes key value from [0] to first colon
+	  key = newIn.substring(0, newIn.indexOf(":")).trim(); // makes key value from [0] to first colon
+	  value = newIn.substring(newIn.indexOf(":")+1, newIn.length()).trim();
+
+	// checks if "" are present in key object and takes substring between ""
+	  if(key.charAt(0) == '"' && key.charAt(key.length()-1) == '"') {
+		  key = key.substring(1, key.length()-1).trim();
+	  }
+
+	// checks if "" are present in value object and takes substring between ""
+	  if(value.charAt(0) == '"' && value.charAt(value.length()-1) == '"') {
+		  value = value.substring(1, value.length()-1).trim();
+	  } else if(value.charAt(0) == '{' && value.charAt(value.length()-1)=='}') {
+		  value = value.substring(1, value.length()-1).trim();
+	  }
+
+	  map.put(key, value);
+
+    return new MyJSON(map);
   }
 }
